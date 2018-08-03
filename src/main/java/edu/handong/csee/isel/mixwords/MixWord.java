@@ -15,11 +15,16 @@ public class MixWord {
 
 	public static void main(String[] args) {
 		MixWord mw = new MixWord();
-		mw.run();
+		try {
+			mw.run();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
 
 	}
 
-	private void run() {
+	private void run() throws IOException {
 		SupportString ss = new SupportString();
 		System.out.print("start Program from... ");
 
@@ -38,6 +43,7 @@ public class MixWord {
 
 			try {
 				String extractedLine = ss.extractLineFromFile(data);
+				// System.out.println(extractedLine);
 				oldTokens = ss.tokenizeNewLine(extractedLine);
 
 				while (true) {
@@ -54,27 +60,37 @@ public class MixWord {
 				e.printStackTrace();
 			}
 
+//			System.out.println("old Tokens: " + oldTokens);
+
 			/* make random number and insert to oldTokens */
 			Random rad = new Random();
 			int randomRange = oldTokens.size(); // 0 ~ oldTokens.size()-1
+//			System.out.println("token size: " + oldTokens.size());
 			HashSet<Integer> duplicatedN = new HashSet<Integer>();
-			int randomN = rad.nextInt(randomRange);
-			duplicatedN.add(randomN);
-			randomRange++;
 			for (String keyword : allkeywordList) {
-				while (!duplicatedN.contains(randomN)) {
-					randomN = rad.nextInt(randomRange);
-					duplicatedN.add(randomN);
-					randomRange++;
+				int randomN = rad.nextInt(randomRange);
+				if (duplicatedN.contains(randomN)) {
+					while (!duplicatedN.contains(randomN)) {
+						randomN = rad.nextInt(randomRange);
+						duplicatedN.add(randomN);
+						randomRange++;
+					}
 				}
+				else {
+//					System.out.println("randomN:" + randomN + ", keyword: " + keyword);
+					oldTokens.add(randomN, keyword);
+				}
+				
 
-				oldTokens.add(randomN, keyword);
 			}
 
+//			System.out.println("old size:" + oldTokens.size() + ", random n: " + duplicatedN);
 			String finalString = ss.getOneLineFromArrayList(oldTokens);
-			
-			System.out.println(finalString);
-			
+
+			System.out.println(finalString + "\n\n");
+
+			ss.makeOut(finalString, data);
+
 		}
 		try {
 			System.out.println("All files saved in result");

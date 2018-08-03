@@ -1,10 +1,13 @@
 package edu.handong.csee.isel.mixwords;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -50,8 +53,7 @@ public class SupportString {
 		int i;
 		ArrayList<String> list = new ArrayList<String>();
 		while (tokenizer.hasMoreTokens()) {
-			// System.out.println(tokenizer.nextToken());
-			list.add(tokenizer.nextToken());
+			list.add(tokenizer.nextToken(" "));
 		}
 		return list;
 	}
@@ -64,5 +66,37 @@ public class SupportString {
 		}
 		
 		return newStr.trim();
+	}
+	
+	public File makeOut(String line, File file) throws IOException {
+		File curDir = new File("result");
+
+		if (!curDir.exists()) {
+			curDir.mkdir();
+		}
+
+		File newFile = new File(curDir.getAbsolutePath() + File.separator + file.getName());
+		if (newFile.exists()) {
+			if (newFile.delete()) {
+				System.out.println("successful to delete " + newFile.getName());
+			} else {
+				System.out.println("fail to delecte " + newFile.getName());
+			}
+		} else {
+			System.out.println("start making " + newFile.getName() + "..");
+		}
+
+		FileOutputStream fileOutputStream = new FileOutputStream(newFile);
+		OutputStreamWriter OutputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+		BufferedWriter bf = new BufferedWriter(OutputStreamWriter);
+
+		bf.write(line);
+		bf.flush();
+
+		bf.close();
+		System.out.println(newFile.getName() + " was made");
+
+		return newFile;
+
 	}
 }
